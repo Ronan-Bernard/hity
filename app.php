@@ -4,9 +4,7 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
-use Hity\Console\Command\{
-  SyncCommand
-};
+use Hity\Console\Command\SyncCommand;
 
 $app = new Application('Hity', '0.1.0');
 
