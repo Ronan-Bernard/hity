@@ -7,6 +7,7 @@ use Symfony\Component\Console\{
     Input\InputInterface,
     Output\OutputInterface
 };
+use StudioAPI\Model;
 
 class SyncCommand extends Command
 {
@@ -48,8 +49,11 @@ class SyncCommand extends Command
         $reflection = new \ReflectionClass($this->modelNamespace . "\\" . $className);
         $methods = $reflection->getMethods();
         foreach ($methods as $method) {
-            echo "method $method \n found";
+            // echo "method $method \n";
         }
+
+        $fieldsMethod = $reflection->getMethod('fields');
+        print_r($fieldsMethod);
     }
 
     static function get_php_classes($php_code) {
