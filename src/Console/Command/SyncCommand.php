@@ -2,6 +2,7 @@
 
 namespace Hity\Console\Command;
 
+use Hity\Util\Parser;
 use Symfony\Component\Console\{
     Command\Command,
     Input\InputInterface,
@@ -37,7 +38,7 @@ class SyncCommand extends Command
 
     protected function syncModelFile(String $filename) {
         $code = file_get_contents($this->modelFolder . '/' . $filename);
-        $classes = self::get_php_classes($code);
+        $classes = Parser::get_php_classes($code);
 
         foreach ($classes as $class) {
             $this->syncModel($code, $class);
@@ -47,29 +48,11 @@ class SyncCommand extends Command
     protected function syncModel(&$fileCode, $className) {
         echo "Sync class $className \n";
         $reflection = new \ReflectionClass($this->modelNamespace . "\\" . $className);
-        $methods = $reflection->getMethods();
-        foreach ($methods as $method) {
+        foreach ($reflection->getMethods() as $method) {
             // echo "method $method \n";
         }
 
         $fieldsMethod = $reflection->getMethod('fields');
         print_r($fieldsMethod);
     }
-
-    static function get_php_classes($php_code) {
-        $classes = array();
-        $tokens = token_get_all($php_code);
-        $count = count($tokens);
-        for ($i = 2; $i < $count; $i++) {
-            if (   $tokens[$i - 2][0] == T_CLASS
-                && $tokens[$i - 1][0] == T_WHITESPACE
-                && $tokens[$i][0] == T_STRING) {
-
-                $class_name = $tokens[$i][1];
-                $classes[] = $class_name;
-            }
-        }
-        return $classes;
-    }
-
 }
