@@ -2,7 +2,6 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
-require 'db.php';
 
 use Symfony\Component\Console\Application;
 use Hity\Console\Command\SyncCommand;
