@@ -31,7 +31,7 @@ class CoreModelSync
         $columns = $this->retrieveColumnsForCurrentTableName();
 
         if (empty($columns)) {
-            $this->createTableForCurrentTableName();
+            $this->createTableForCurrentTableName($reflection);
         } else {
             // compare table and fields : addition, deletion, then comparison field by field
             // $columns vs $fieldsMethod
@@ -43,6 +43,10 @@ class CoreModelSync
         }
     }
 
+    /**
+     * @param \ReflectionClass $reflection
+     * @todo check valid characters in table name
+     */
     protected function decideTableName(\ReflectionClass $reflection)
     {
         if ($reflection->hasProperty('name')) {
@@ -66,12 +70,23 @@ class CoreModelSync
         return $tableColumnsStmt->fetchAll();
     }
 
-    protected function createTableForCurrentTableName()
+    protected function createTableForCurrentTableName(\ReflectionClass $reflection)
     {
         try {
             $createTable = "CREATE TABLE $this->tableName(";
+            $reflectionMethod = $reflection->getMethod('fields');
+
+            // add ID - to customize ?
+            $createTable .= "id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,";
+
+            foreach ($reflectionMethod->getParameters() as $param) {
+                // de type ReflectionParameter avec un name = nom de l'arg
+                // j'espère qu'on peut choper le typehint sinon c mort
+                // -->hasType et getType ?
+            }
 
             $createTable .= ")";
+                echo "<br/>" . $createTable; die;
             $this->pdo->prepare($createTable);
             $this->pdo->execute();
         } catch (\PDOException $e) {
