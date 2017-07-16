@@ -48,18 +48,13 @@ class DB
                 . ';dbname=' . $this->dbDatabase
             ;
             self::$_pdo = new \PDO($dsn, $this->dbUsername, $this->dbPassword);
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             print "Erreur !: " . $e->getMessage() . "<br/>";
             die();
         }
     }
 
-    public function getPdo()
-    {
-        return self::pdo();
-    }
-
-    public static function getInstance()
+    public static function getInstance() : \PDO
     {
         if (is_null(self::$_instance)) {
             self::$_instance = new DB();
