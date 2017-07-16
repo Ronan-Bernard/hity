@@ -3,6 +3,7 @@
 namespace Hity\Console\Command;
 
 use Hity\Util\Parser;
+use Hity\Core\CoreModelSync;
 use Symfony\Component\Console\{
     Command\Command,
     Input\InputInterface,
@@ -38,21 +39,11 @@ class SyncCommand extends Command
 
     protected function syncModelFile(String $filename) {
         $code = file_get_contents($this->modelFolder . '/' . $filename);
-        $classes = Parser::get_php_classes($code);
+        $classes = Parser::getPhpClasses($code);
 
         foreach ($classes as $class) {
-            $this->syncModel($code, $class);
+            $c = new CoreModelSync($class, $this->modelNamespace);
         }
     }
 
-    protected function syncModel(&$fileCode, $className) {
-        echo "Sync class $className \n";
-        $reflection = new \ReflectionClass($this->modelNamespace . "\\" . $className);
-        foreach ($reflection->getMethods() as $method) {
-            // echo "method $method \n";
-        }
-
-        $fieldsMethod = $reflection->getMethod('fields');
-        print_r($fieldsMethod);
-    }
 }
