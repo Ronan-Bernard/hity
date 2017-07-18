@@ -73,21 +73,36 @@ class CoreModelSync
     protected function createTableForCurrentTableName(\ReflectionClass $reflection)
     {
         try {
-            $createTable = "CREATE TABLE $this->tableName(";
+            $sql = "CREATE TABLE $this->tableName(";
             $reflectionMethod = $reflection->getMethod('fields');
 
             // add ID - to customize ?
-            $createTable .= "id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,";
+            $sql .= "id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,";
 
             foreach ($reflectionMethod->getParameters() as $param) {
-                // de type ReflectionParameter avec un name = nom de l'arg
-                // j'espère qu'on peut choper le typehint sinon c mort
-                // -->hasType et getType ?
+
+                if ($param->hasType()) {
+                    $typesArray = array(
+                        'string' => 'TEXT',
+                        'int' => 'INT(11)',
+                        'float' => 'FLOAT(7,4)',
+                        'bool' => 'TINYINT(1)'
+                    );
+                    $paramType = strtolower($param->getType());
+                    $fieldType = $typesArray[$paramType];
+                } else {
+                    $fieldType = 'VARCHAR(255)';
+                }
+                $sql .= sprintf('%s %s, ', $param->getName(), $fieldType);
+
+                // TODO remove trailing comma
+                // TODO lire un enum sous forme de class anonyme ?
+                // TODO a default value could be given
             }
 
-            $createTable .= ")";
-                echo "<br/>" . $createTable; die;
-            $this->pdo->prepare($createTable);
+            $sql .= ")";
+                echo "<br/>" . $sql; die;
+            $this->pdo->prepare($sql);
             $this->pdo->execute();
         } catch (\PDOException $e) {
             print "Erreur à la création de la table !: "
