@@ -9,7 +9,6 @@ use Symfony\Component\Console\{
     Input\InputInterface,
     Output\OutputInterface
 };
-use StudioAPI\Model;
 
 class SyncCommand extends Command
 {

@@ -14,7 +14,6 @@ class CoreModelSync
     public function __construct(String $className, String $namespace)
     {
         $this->pdo = DB::getInstance();
-        echo gettype($this->pdo);
         $this->setClassToSync($className);
         $this->setClassNamespace($namespace);
         $this->syncModel();
@@ -93,15 +92,15 @@ class CoreModelSync
                 } else {
                     $fieldType = 'VARCHAR(255)';
                 }
-                $sql .= sprintf('%s %s, ', $param->getName(), $fieldType);
+                $sql .= sprintf(' %s %s,', $param->getName(), $fieldType);
 
-                // TODO remove trailing comma
                 // TODO lire un enum sous forme de class anonyme ?
                 // TODO a default value could be given
             }
+            $sql = substr($sql, 0, -1); // remove trailing comma
 
             $sql .= ")";
-                echo "<br/>" . $sql; die;
+                echo "\n" . $sql . "\n"; die;
             $this->pdo->prepare($sql);
             $this->pdo->execute();
         } catch (\PDOException $e) {
